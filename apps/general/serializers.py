@@ -7,23 +7,25 @@ class GenericaSerializer(serializers.ModelSerializer):
         model = GeneralParameters
         fields = "__all__"
 
+class ValueParameterSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ValueParameters
+        fields = "__all__"
 
-class ValueParametersList(serializers.ModelSerializer):
+class ValueParameterSerializerList(serializers.ModelSerializer):
     parameter = GenericaSerializer(read_only=True)
 
     class Meta:
         model = ValueParameters
         fields = "__all__"
 
-
 class UsersSerializer(serializers.ModelSerializer):
     class Meta:
         model = Users
         fields = "__all__"
 
-
 class UsersSerializerList(serializers.ModelSerializer):
-    profile = ValueParametersList(read_only=True)
+    profile = ValueParameterSerializerList(read_only=True)
 
     class Meta:
         model = Users

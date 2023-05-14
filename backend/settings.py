@@ -44,27 +44,27 @@ INSTALLED_APPS = [
     'django_filters',
 ]
 
-AUTH_USER_MODEL = 'general.Users'
+# AUTH_USER_MODEL = 'general.Users'
 
-REST_FRAMEWORK = {
-    'DEFAULT_FILTER_BACKENDS':
-    ['django_filters.rest_framework.DjangoFilterBackend'],
-    'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticated',
-    ),
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.BasicAuthentication',
-    ),
-}
+# REST_FRAMEWORK = {
+#     'DEFAULT_FILTER_BACKENDS':
+#     ['django_filters.rest_framework.DjangoFilterBackend'],
+#     'DEFAULT_PERMISSION_CLASSES': (
+#         'rest_framework.permissions.IsAuthenticated',
+#     ),
+#     'DEFAULT_AUTHENTICATION_CLASSES': (
+#         'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+#         'rest_framework.authentication.SessionAuthentication',
+#         'rest_framework.authentication.BasicAuthentication',
+#     ),
+# }
 
-JWT_AUTH = {
-    'JWT_EXPIRATION_DELTA': datetime.timedelta(days=1),
-    'JWT_ALLOW_REFRESH': True,
-    'JWT_RESPONSE_PAYLOAD_HANDLER': 'backend.utils.my_jwt_response_handler',
-    'JWT_REFRESH_EXPIRATION_DELTA': datetime.timedelta(days=7),
-}
+# JWT_AUTH = {
+#     'JWT_EXPIRATION_DELTA': datetime.timedelta(days=1),
+#     'JWT_ALLOW_REFRESH': True,
+#     'JWT_RESPONSE_PAYLOAD_HANDLER': 'backend.utils.my_jwt_response_handler',
+#     'JWT_REFRESH_EXPIRATION_DELTA': datetime.timedelta(days=7),
+# }
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

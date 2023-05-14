@@ -22,4 +22,5 @@ apiv1 = "api/v1.0/"
 urlpatterns = [
     path("admin/", admin.site.urls),
     path(apiv1, include("apps.general.urls")),
+    path(apiv1, include("apps.scheduler.urls")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
