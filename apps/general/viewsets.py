@@ -26,11 +26,12 @@ def current_user(request):
         return Response({'message': 'Usuario no autenticado.'}, status=status.HTTP_401_UNAUTHORIZED)
 
 class Login(ObtainJSONWebToken):
-    permission_classes = (permissions.AllowAny,)
 
+    permission_classes = (permissions.AllowAny,)
     def post(self, request, *args, **kwargs):
         email = request.data["email"]
         password = request.data["password"]
+        
         no_valido = Response(
             {"titulo": "Email o clave incorrectos."},
             status=status.HTTP_302_FOUND,
@@ -56,11 +57,12 @@ class CreateUser(generics.CreateAPIView):
     serializer_class = UsersSerializer
 
     def create(self, request, *args, **kwargs):
-        # (user, token) = JSONWebTokenAuthentication().authenticate(request)
-        # _mutable = request.data._mutable
-        # request.data._mutable = True
-        request.data["password"]=make_password(request.data["password"])
-        # request.data._mutable = _mutable
+        (usuario, token) = JSONWebTokenAuthentication().authenticate(request)
+        _mutable = request.data._mutable
+        request.data._mutable = True
+        request.data["password"]=make_password(request.data["ssn"])
+        request.data["registration_user"]=Users.objects.get(pk=usuario.id)
+        request.data._mutable = _mutable
         super(CreateUser, self).create(request, args, kwargs)
         return Response({"titulo": "Success"})
     
@@ -77,10 +79,10 @@ class DeleteUser(generics.UpdateAPIView):
                 {"titulo": "La user no existe"}, status=status.HTTP_302_FOUND
             )
         else:
-            # (usuario, token) = JSONWebTokenAuthentication().authenticate(request)
+            (usuario, token) = JSONWebTokenAuthentication().authenticate(request)
             user.active = 0
             user.deletion_date = datetime.datetime.now()
-            user.deletion_user = Users.objects.get(pk=4)
+            user.deletion_user = Users.objects.get(pk=usuario.id)
             user.save()
             return Response({"titulo": "Success"})
         
@@ -89,7 +91,7 @@ class UpdateUser(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = UsersSerializer
 
     def patch(self, request, *args, **kwargs):
-        # (usuario, token) = JSONWebTokenAuthentication().authenticate(request)
+        (usuario, token) = JSONWebTokenAuthentication().authenticate(request)
         try:
             user = Users.objects.get(pk=kwargs['pk'])
         except (KeyError, Users.DoesNotExist):
@@ -105,10 +107,10 @@ class CreateGeneralParameter(generics.CreateAPIView):
     serializer_class = GenericaSerializer
 
     def create(self, request, *args, **kwargs):
-        # (user, token) = JSONWebTokenAuthentication().authenticate(request)
-        # _mutable = request.data._mutable
-        # request.data._mutable = True
-        # request.data._mutable = _mutable
+        (usuario, token) = JSONWebTokenAuthentication().authenticate(request)
+        _mutable = request.data._mutable
+        request.data._mutable = True
+        request.data._mutable = _mutable
         super(CreateGeneralParameter, self).create(request, args, kwargs)
         return Response({"titulo": "Success"})
 
@@ -124,7 +126,7 @@ class DeleteGeneralParameters(generics.UpdateAPIView):
                 {"titulo": "el dato no existe"}, status=status.HTTP_302_FOUND
             )
         else:
-            # (usuario, token) = JSONWebTokenAuthentication().authenticate(request)
+            (usuario, token) = JSONWebTokenAuthentication().authenticate(request)
             general.active = 0
             general.save()
             return Response({"titulo": "Success"})
@@ -134,7 +136,7 @@ class UpdateGeneralParameters(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = GenericaSerializer
 
     def patch(self, request, *args, **kwargs):
-        # (usuario, token) = JSONWebTokenAuthentication().authenticate(request)
+        (usuario, token) = JSONWebTokenAuthentication().authenticate(request)
         try:
             user = GeneralParameters.objects.get(pk=kwargs['pk'])
         except (KeyError, GeneralParameters.DoesNotExist):
@@ -150,10 +152,11 @@ class CreateValueParameters(generics.CreateAPIView):
     serializer_class = ValueParameterSerializer
 
     def create(self, request, *args, **kwargs):
-        # (user, token) = JSONWebTokenAuthentication().authenticate(request)
-        # _mutable = request.data._mutable
-        # request.data._mutable = True
-        # request.data._mutable = _mutable
+        (usuario, token) = JSONWebTokenAuthentication().authenticate(request)
+        _mutable = request.data._mutable
+        request.data._mutable = True        
+        request.data["registration_user"]=Users.objects.get(pk=usuario.id)
+        request.data._mutable = _mutable
         super(CreateValueParameters, self).create(request, args, kwargs)
         return Response({"titulo": "Success"})
 
@@ -180,7 +183,7 @@ class UpdateValueParameters(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ValueParameterSerializer
 
     def patch(self, request, *args, **kwargs):
-        # (usuario, token) = JSONWebTokenAuthentication().authenticate(request)
+        (usuario, token) = JSONWebTokenAuthentication().authenticate(request)
         try:
             user = ValueParameters.objects.get(pk=kwargs['pk'])
         except (KeyError, ValueParameters.DoesNotExist):
