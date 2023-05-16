@@ -3,6 +3,7 @@ import datetime
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework import generics
+from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 from rest_framework import status
 from ..general.models import Users
 from .serializers import RouteSerializer, RouteSerializerList, ShedulesSerializer, ShedulesSerializerList, VehicleSerializer, VehicleSerializerList
@@ -15,10 +16,15 @@ class CreateVehicle(generics.CreateAPIView):
     serializer_class = VehicleSerializer
 
     def create(self, request, *args, **kwargs):
-        # (user, token) = JSONWebTokenAuthentication().authenticate(request)
-        # _mutable = request.data._mutable
-        # request.data._mutable = True
-        # request.data._mutable = _mutable
+        (user, token) = JSONWebTokenAuthentication().authenticate(request)
+        _mutable = request.data._mutable
+        request.data._mutable = True
+        required_fields = ['make', 'year', 'description', 'capacity']
+        for field in required_fields:
+            if not request.data.get(field):
+                return Response({"titulo": f"{field} es un campo requerido"}, status=status.HTTP_400_BAD_REQUEST)
+        request.data["registration_user"]=user.id
+        request.data._mutable = _mutable
         super(CreateVehicle, self).create(request, args, kwargs)
         return Response({"titulo": "Success"})
 
@@ -62,10 +68,15 @@ class CreateRoute(generics.CreateAPIView):
     serializer_class = RouteSerializer
 
     def create(self, request, *args, **kwargs):
-        # (user, token) = JSONWebTokenAuthentication().authenticate(request)
-        # _mutable = request.data._mutable
-        # request.data._mutable = True
-        # request.data._mutable = _mutable
+        (user, token) = JSONWebTokenAuthentication().authenticate(request)
+        _mutable = request.data._mutable
+        request.data._mutable = True
+        required_fields = ['vehicle', 'driver', 'description']
+        for field in required_fields:
+            if not request.data.get(field):
+                return Response({"titulo": f"{field} es un campo requerido"}, status=status.HTTP_400_BAD_REQUEST)
+        request.data["registration_user"]=user.id
+        request.data._mutable = _mutable
         super(CreateRoute, self).create(request, args, kwargs)
         return Response({"titulo": "Success"})
 
@@ -108,10 +119,15 @@ class CreateSchedule(generics.CreateAPIView):
     serializer_class = ShedulesSerializer
 
     def create(self, request, *args, **kwargs):
-        # (user, token) = JSONWebTokenAuthentication().authenticate(request)
-        # _mutable = request.data._mutable
-        # request.data._mutable = True
-        # request.data._mutable = _mutable
+        (user, token) = JSONWebTokenAuthentication().authenticate(request)
+        _mutable = request.data._mutable
+        request.data._mutable = True
+        required_fields = ['route', 'to_date', 'from_date', 'week_num']
+        for field in required_fields:
+            if not request.data.get(field):
+                return Response({"titulo": f"{field} es un campo requerido"}, status=status.HTTP_400_BAD_REQUEST)
+        request.data["registration_user"]=user.id
+        request.data._mutable = _mutable
         super(CreateSchedule, self).create(request, args, kwargs)
         return Response({"titulo": "Success"})
 

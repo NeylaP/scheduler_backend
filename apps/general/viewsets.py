@@ -1,6 +1,6 @@
 from django.db.models import Q
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
-from rest_framework import generics, status, viewsets
+from rest_framework import generics, status
 from rest_framework_jwt.views import ObtainJSONWebToken
 from rest_framework import permissions, status
 from rest_framework import generics
@@ -17,7 +17,7 @@ from .models import GeneralParameters, Users, ValueParameters
 @api_view(["GET"])
 def current_user(request):
     if request.user.is_authenticated:
-        user = Users.objects.get(id=2)
+        user = Users.objects.get(id=request.user.id)
         user.last_login = datetime.datetime.now()
         user.save()
         serializer = UsersSerializerList(request.user)
@@ -29,6 +29,10 @@ class Login(ObtainJSONWebToken):
 
     permission_classes = (permissions.AllowAny,)
     def post(self, request, *args, **kwargs):
+        required_fields = ['email', 'password']
+        for field in required_fields:
+            if not request.data.get(field):
+                return Response({"titulo": f"{field} es un campo requerido"}, status=status.HTTP_400_BAD_REQUEST)
         email = request.data["email"]
         password = request.data["password"]
         
@@ -57,17 +61,28 @@ class CreateUser(generics.CreateAPIView):
     serializer_class = UsersSerializer
 
     def create(self, request, *args, **kwargs):
-        (usuario, token) = JSONWebTokenAuthentication().authenticate(request)
-        _mutable = request.data._mutable
-        request.data._mutable = True
-        request.data["password"]=make_password(request.data["ssn"])
-        request.data["registration_user"]=Users.objects.get(pk=usuario.id)
-        request.data._mutable = _mutable
-        super(CreateUser, self).create(request, args, kwargs)
-        return Response({"titulo": "Success"})
-    
+        (user, token) = JSONWebTokenAuthentication().authenticate(request)
+        try:
+            perfil = ValueParameters.objects.get(code="driver_user")
+            user = Users.objects.get((Q(ssn=request.data["ssn"]) | Q(email=request.data["email"])) & Q(active=1))
+        except (KeyError, Users.DoesNotExist):
+            _mutable = request.data._mutable
+            request.data._mutable = True
+            required_fields = ['ssn', 'last_name', 'first_name', 'dob', 'city', 'zip', 'phone', 'address', 'email']
+            for field in required_fields:
+                if not request.data.get(field):
+                    return Response({"titulo": f"{field} es un campo requerido"}, status=status.HTTP_400_BAD_REQUEST)
+            request.data["password"]=make_password(request.data["ssn"])
+            request.data["profile"]=perfil.id
+            request.data["registration_user"]=user.id
+            request.data._mutable = _mutable
+            super(CreateUser, self).create(request, args, kwargs)
+            return Response({"titulo": "Success"})
+        else:
+            return Response({"titulo": "Este usuario ya se encuentra registrado"})
 class ListUsers(generics.ListAPIView):
-    queryset = Users.objects.filter(active=1)
+    perfil = ValueParameters.objects.get(code="driver_user")
+    queryset = Users.objects.filter(profile=perfil.id, active=1)
     serializer_class = UsersSerializerList
 
 class DeleteUser(generics.UpdateAPIView):
