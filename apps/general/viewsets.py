@@ -63,9 +63,9 @@ class CreateUser(generics.CreateAPIView):
     def create(self, request, *args, **kwargs):
         (user, token) = JSONWebTokenAuthentication().authenticate(request)
         try:
-            perfil = ValueParameters.objects.get(code="driver_user")
             user = Users.objects.get((Q(ssn=request.data["ssn"]) | Q(email=request.data["email"])) & Q(active=1))
         except (KeyError, Users.DoesNotExist):
+            perfil = ValueParameters.objects.get(code='driver_user', active=1)
             _mutable = request.data._mutable
             request.data._mutable = True
             required_fields = ['ssn', 'last_name', 'first_name', 'dob', 'city', 'zip', 'phone', 'address', 'email']
@@ -186,7 +186,7 @@ class DeleteValueParameters(generics.UpdateAPIView):
         except (KeyError, ValueParameters.DoesNotExist):
             return Response({"titulo": "el dato no existe"}, status=status.HTTP_302_FOUND)
         else:
-            # (usuario, token) = JSONWebTokenAuthentication().authenticate(request)
+            (usuario, token) = JSONWebTokenAuthentication().authenticate(request)
             value.active = 0
             value.deletion_date = datetime.datetime.now()
             value.deletion_user = Users.objects.get(pk=4)

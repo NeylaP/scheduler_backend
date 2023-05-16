@@ -39,7 +39,7 @@ class DeleteVehicle(generics.UpdateAPIView):
         except (KeyError, Vehicle.DoesNotExist):
             return Response({"titulo": "el dato no existe"}, status=status.HTTP_302_FOUND)
         else:
-            # (usuario, token) = JSONWebTokenAuthentication().authenticate(request)
+            (usuario, token) = JSONWebTokenAuthentication().authenticate(request)
             vehicle.active = 0
             vehicle.deletion_date = datetime.datetime.now()
             vehicle.deletion_user = Users.objects.get(pk=4)
@@ -51,7 +51,7 @@ class UpdateVehicle(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = VehicleSerializer
 
     def patch(self, request, *args, **kwargs):
-        # (usuario, token) = JSONWebTokenAuthentication().authenticate(request)
+        (usuario, token) = JSONWebTokenAuthentication().authenticate(request)
         try:
             vehicle = Vehicle.objects.get(pk=kwargs['pk'])
         except (KeyError, Vehicle.DoesNotExist):
@@ -91,7 +91,7 @@ class DeleteRoute(generics.UpdateAPIView):
         except (KeyError, Route.DoesNotExist):
             return Response({"titulo": "el dato no existe"}, status=status.HTTP_302_FOUND)
         else:
-            # (usuario, token) = JSONWebTokenAuthentication().authenticate(request)
+            (usuario, token) = JSONWebTokenAuthentication().authenticate(request)
             route.active = 0
             route.deletion_date = datetime.datetime.now()
             route.deletion_user = Users.objects.get(pk=4)
@@ -103,7 +103,7 @@ class UpdateRoute(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = RouteSerializer
 
     def patch(self, request, *args, **kwargs):
-        # (usuario, token) = JSONWebTokenAuthentication().authenticate(request)
+        (usuario, token) = JSONWebTokenAuthentication().authenticate(request)
         try:
             route = Route.objects.get(pk=kwargs['pk'])
         except (KeyError, Route.DoesNotExist):
@@ -142,7 +142,7 @@ class DeleteSchedule(generics.UpdateAPIView):
         except (KeyError, Schedules.DoesNotExist):
             return Response({"titulo": "el dato no existe"}, status=status.HTTP_302_FOUND)
         else:
-            # (usuario, token) = JSONWebTokenAuthentication().authenticate(request)
+            (usuario, token) = JSONWebTokenAuthentication().authenticate(request)
             schedu.active = 0
             schedu.deletion_date = datetime.datetime.now()
             schedu.deletion_user = Users.objects.get(pk=4)
@@ -154,7 +154,7 @@ class UpdateSchedule(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ShedulesSerializer
 
     def patch(self, request, *args, **kwargs):
-        # (usuario, token) = JSONWebTokenAuthentication().authenticate(request)
+        (usuario, token) = JSONWebTokenAuthentication().authenticate(request)
         try:
             schedu = Schedules.objects.get(pk=kwargs['pk'])
         except (KeyError, Schedules.DoesNotExist):
