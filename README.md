@@ -1,4 +1,4 @@
-# Registro de Flota de Vehículos y Conductores
+# Programación de rutas transpotation SAS
 Este proyecto es una solución web desarrollada en Django que permite a los usuarios registrar la flota de vehículos y conductores, además de contar con un cronograma de rutas de trabajo por semanas.
 Una vez descargado el proyecto desde el repositorio de Github. En la raíz del proyecto se encuentra un archivo requirements.txt que contiene todas las dependencias necesarias para el proyecto. Para instalar estas dependencias, pero primero debe tener el entorno virtual listo, Para crear un entorno virtual en Python, sigue los siguientes pasos:
 Abre la terminal o el símbolo del sistema (en Windows).
